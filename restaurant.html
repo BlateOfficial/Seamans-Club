@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lunora Restaurant</title>
+  <style>
+    :root {
+      --bg: #0f0b07;
+      --bg-soft: #17100b;
+      --card: rgba(255, 244, 224, 0.08);
+      --card-strong: rgba(255, 244, 224, 0.14);
+      --text: #fff4e0;
+      --muted: #cbb99b;
+      --gold: #d7a84f;
+      --gold-2: #ffcf70;
+      --red: #9d2f24;
+      --green: #4d7c45;
+      --border: rgba(255, 207, 112, 0.18);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+      --radius: 26px;
+      --speed: 380ms;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(215, 168, 79, 0.18), transparent 32%),
+        radial-gradient(circle at 90% 0%, rgba(157, 47, 36, 0.2), transparent 28%),
+        linear-gradient(135deg, #0d0906 0%, #1b1009 45%, #080604 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255, 244, 224, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 244, 224, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.68), transparent 24%, transparent 76%, rgba(0, 0, 0, 0.68));
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app-shell {
+      width: min(1220px, calc(100% - 34px));
+      margin: 0 auto;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 16px;
+      z-index: 50;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(15, 11, 7, 0.78);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-left: 6px;
+      min-width: max-content;
+    }
+
+    .brand-mark {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #211307;
+      font-size: 22px;
+      background: conic-gradient(from 140deg, var(--gold), var(--gold-2), #fff0b3, var(--gold));
+      box-shadow: 0 0 28px rgba(255, 207, 112, 0.34);
+    }
+
+    .brand-name {
+      display: grid;
+      line-height: 1.04;
+    }
+
+    .brand-name strong {
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-name span {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-link {
+      position: relative;
+      color: var(--muted);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: transparent;
+      transition: color var(--speed), background var(--speed), transform var(--speed);
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(255, 244, 224, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .nav-link.active {
+      color: #241505;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 12px 28px rgba(215, 168, 79, 0.25);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn,
+    .menu-toggle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      background: rgba(255, 244, 224, 0.08);
+      border: 1px solid rgba(255, 244, 224, 0.11);
+      transition: transform var(--speed), background var(--speed);
+    }
+
+    .icon-btn:hover,
+    .menu-toggle:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 244, 224, 0.15);
+    }
+
+    .cart-btn {
+      position: relative;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -4px;
+      right: -5px;
+      min-width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      padding: 0 6px;
+      border-radius: 999px;
+      color: #271506;
+      background: var(--gold-2);
+      font-size: 12px;
+      font-weight: 900;
+      border: 2px solid #100b07;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    main {
+      position: relative;
+      min-height: calc(100vh - 88px);
+      padding: 38px 0 56px;
+    }
+
+    .page {
+      display: none;
+      animation: pageIn 560ms ease both;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(22px) scale(0.985);
+        filter: blur(7px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 34px;
+      align-items: center;
+      min-height: calc(100vh - 150px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      width: max-content;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--gold-2);
+      background: rgba(255, 244, 224, 0.06);
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-2);
+      box-shadow: 0 0 20px var(--gold-2);
+    }
+
+    .hero h1,
+    .section-head h1,
+    .section-head h2 {
+      letter-spacing: -2.5px;
+      line-height: 0.94;
+    }
+
+    .hero h1 {
+      max-width: 760px;
+      font-size: clamp(54px, 9vw, 112px);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #fff7df, var(--gold-2) 40%, #d7893d 78%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: clamp(17px, 2.1vw, 21px);
+      line-height: 1.68;
+    }
+
+    .hero-actions,
+    .section-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 13px 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      transition: transform var(--speed), box-shadow var(--speed), background var(--speed), border-color var(--speed);
+    }
+
+    .btn-primary {
+      color: #231304;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 18px 34px rgba(215, 168, 79, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 44px rgba(215, 168, 79, 0.33);
+    }
+
+    .btn-ghost {
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: rgba(255, 244, 224, 0.06);
+    }
+
+    .btn-ghost:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 244, 224, 0.11);
+      border-color: rgba(255, 207, 112, 0.35);
+    }
+
+    .hero-card-wrap {
+      position: relative;
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+      perspective: 1100px;
+    }
+
+    .hero-plate {
+      position: relative;
+      width: min(520px, 92vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 48%, #2d1a0e 0 34%, #fff2d0 35% 36%, #4d2a12 37% 48%, #231209 49% 61%, #f3d48c 62% 64%, #1a0f09 65% 100%);
+      box-shadow:
+        0 35px 90px rgba(0, 0, 0, 0.58),
+        inset 0 0 80px rgba(255, 244, 224, 0.08);
+      transform: rotateX(5deg) rotateY(-12deg);
+      animation: floatPlate 5.5s ease-in-out infinite;
+    }
+
+    @keyframes floatPlate {
+      0%, 100% { transform: rotateX(5deg) rotateY(-12deg) translateY(0); }
+      50% { transform: rotateX(7deg) rotateY(-8deg) translateY(-16px); }
+    }
+
+    .food-dot {
+      position: absolute;
+      border-radius: 999px;
+      box-shadow: inset 0 -12px 20px rgba(0, 0, 0, 0.22), 0 12px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    .dot-1 { width: 34%; height: 22%; left: 32%; top: 35%; background: linear-gradient(135deg, #cf5b35, #7a2319); transform: rotate(-18deg); }
+    .dot-2 { width: 24%; height: 18%; left: 43%; top: 47%; background: linear-gradient(135deg, #ffd36f, #b97828); transform: rotate(22deg); }
+    .dot-3 { width: 18%; height: 13%; left: 28%; top: 50%; background: linear-gradient(135deg, #6d9b48, #2e5d2c); transform: rotate(-8deg); }
+    .dot-4 { width: 12%; height: 12%; left: 55%; top: 32%; background: linear-gradient(135deg, #f7efe1, #d6b06f); }
+    .dot-5 { width: 9%; height: 9%; left: 37%; top: 31%; background: linear-gradient(135deg, #b6382b, #5e1712); }
+
+    .steam {
+      position: absolute;
+      bottom: 62%;
+      left: 50%;
+      width: 10px;
+      height: 92px;
+      border-radius: 999px;
+      background: linear-gradient(to top, transparent, rgba(255, 244, 224, 0.65), transparent);
+      filter: blur(7px);
+      opacity: 0.4;
+      animation: steam 3s ease-in-out infinite;
+    }
+
+    .steam:nth-child(2) { margin-left: -60px; animation-delay: 0.45s; height: 76px; }
+    .steam:nth-child(3) { margin-left: 52px; animation-delay: 0.9s; height: 86px; }
+
+    @keyframes steam {
+      from { transform: translateY(35px) scaleX(1); opacity: 0; }
+      45% { opacity: 0.45; }
+      to { transform: translateY(-40px) scaleX(2); opacity: 0; }
+    }
+
+    .floating-card {
+      position: absolute;
+      width: min(255px, 45vw);
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(15, 11, 7, 0.72);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      animation: smallFloat 4.8s ease-in-out infinite;
+    }
+
+    .floating-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .floating-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .float-a { left: 0; top: 86px; }
+    .float-b { right: 0; bottom: 80px; animation-delay: 0.8s; }
+
+    @keyframes smallFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+      max-width: 650px;
+    }
+
+    .stat-card,
+    .glass-card,
+    .menu-item,
+    .reservation-card,
+    .contact-card,
+    .timeline-item,
+    .review-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(16px);
+    }
+
+    .stat-card {
+      padding: 18px;
+      border-radius: 22px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 30px;
+      color: var(--gold-2);
+      letter-spacing: -1px;
+    }
+
+    .stat-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 26px;
+      margin: 28px 0 26px;
+    }
+
+    .section-head.center {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .section-head h1,
+    .section-head h2 {
+      font-size: clamp(42px, 6vw, 72px);
+    }
+
+    .section-head p {
+      max-width: 650px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 17px;
+      margin-top: 14px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .glass-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 225px;
+      padding: 24px;
+      border-radius: var(--radius);
+      transition: transform var(--speed), background var(--speed), border-color var(--speed);
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: -80px auto auto -80px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 207, 112, 0.22), transparent 70%);
+      opacity: 0;
+      transition: opacity var(--speed);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-8px);
+      background: var(--card-strong);
+      border-color: rgba(255, 207, 112, 0.32);
+    }
+
+    .glass-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      border-radius: 20px;
+      color: #211307;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      font-size: 27px;
+      box-shadow: 0 15px 34px rgba(215, 168, 79, 0.2);
+    }
+
+    .glass-card h3 {
+      font-size: 23px;
+      margin-bottom: 10px;
+    }
+
+    .glass-card p {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .menu-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 11px 15px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 244, 224, 0.06);
+      transition: color var(--speed), background var(--speed), transform var(--speed);
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      color: var(--text);
+      background: rgba(255, 244, 224, 0.1);
+    }
+
+    .filter-btn.active {
+      color: #231304;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+    }
+
+    .search-box {
+      min-width: min(330px, 100%);
+      height: 48px;
+      padding: 0 17px;
+      color: var(--text);
+      outline: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 244, 224, 0.06);
+      transition: border-color var(--speed), background var(--speed);
+    }
+
+    .search-box:focus {
+      border-color: rgba(255, 207, 112, 0.46);
+      background: rgba(255, 244, 224, 0.1);
+    }
+
+    .search-box::placeholder,
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(203, 185, 155, 0.72);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      min-height: 420px;
+    }
+
+    .menu-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      transition: transform var(--speed), border-color var(--speed), background var(--speed), opacity var(--speed);
+    }
+
+    .menu-item.hidden {
+      display: none;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-9px);
+      border-color: rgba(255, 207, 112, 0.34);
+      background: var(--card-strong);
+    }
+
+    .food-art {
+      height: 190px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 22% 25%, rgba(255, 207, 112, 0.26), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(157, 47, 36, 0.24), transparent 25%),
+        linear-gradient(135deg, rgba(255, 244, 224, 0.1), rgba(255, 244, 224, 0.02));
+    }
+
+    .food-art::before {
+      content: attr(data-emoji);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 84px;
+      filter: drop-shadow(0 22px 22px rgba(0, 0, 0, 0.3));
+    }
+
+    .food-art::after {
+      content: "";
+      position: absolute;
+      inset: auto 22px 16px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.28);
+      filter: blur(8px);
+    }
+
+    .menu-content {
+      padding: 20px;
+    }
+
+    .menu-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .menu-topline h3 {
+      font-size: 22px;
+    }
+
+    .price {
+      color: var(--gold-2);
+      font-size: 21px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .menu-desc {
+      color: var(--muted);
+      line-height: 1.58;
+      min-height: 76px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .tag {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 244, 224, 0.07);
+      border: 1px solid rgba(255, 244, 224, 0.08);
+      font-size: 12px;
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      color: #241505;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      font-weight: 900;
+      transition: transform var(--speed), filter var(--speed);
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .about-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .story-card {
+      min-height: 600px;
+      border-radius: 34px;
+      padding: 28px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255, 244, 224, 0.11), rgba(255, 244, 224, 0.04)),
+        radial-gradient(circle at 52% 22%, rgba(215, 168, 79, 0.22), transparent 34%);
+      box-shadow: var(--shadow);
+    }
+
+    .story-card::before {
+      content: "Lunora";
+      position: absolute;
+      left: 24px;
+      bottom: -20px;
+      color: rgba(255, 244, 224, 0.055);
+      font-size: 118px;
+      font-weight: 950;
+      letter-spacing: -8px;
+    }
+
+    .chef-circle {
+      width: min(360px, 78vw);
+      aspect-ratio: 1;
+      margin: 45px auto 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 207, 112, 0.28), transparent 20%),
+        radial-gradient(circle, #2d1a0e 0 42%, #f4ca76 43% 45%, #16100b 46% 100%);
+      box-shadow: inset 0 0 70px rgba(255, 244, 224, 0.07), 0 24px 80px rgba(0, 0, 0, 0.36);
+      font-size: 115px;
+    }
+
+    .story-card h3 {
+      position: relative;
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .story-card p {
+      position: relative;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 18px;
+      padding: 22px;
+      border-radius: 26px;
+      transition: transform var(--speed), background var(--speed);
+    }
+
+    .timeline-item:hover {
+      transform: translateX(6px);
+      background: var(--card-strong);
+    }
+
+    .year {
+      display: grid;
+      place-items: center;
+      height: 60px;
+      border-radius: 18px;
+      color: #251405;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      font-weight: 950;
+    }
+
+    .timeline-item h3 {
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      line-height: 1.62;
+    }
+
+    .reservation-layout {
+      display: grid;
+      grid-template-columns: 0.86fr 1.14fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .reservation-card,
+    .contact-card {
+      padding: 26px;
+      border-radius: 30px;
+    }
+
+    .reservation-card h3,
+    .contact-card h3 {
+      font-size: 27px;
+      margin-bottom: 12px;
+    }
+
+    .reservation-card p,
+    .contact-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hours-list {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hours-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255, 244, 224, 0.1);
+      color: var(--muted);
+    }
+
+    .hours-row strong {
+      color: var(--text);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      min-height: 50px;
+      padding: 13px 15px;
+      color: var(--text);
+      outline: none;
+      border: 1px solid rgba(255, 207, 112, 0.16);
+      border-radius: 17px;
+      background: rgba(255, 244, 224, 0.065);
+      transition: border-color var(--speed), background var(--speed), transform var(--speed);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: rgba(255, 207, 112, 0.48);
+      background: rgba(255, 244, 224, 0.1);
+      transform: translateY(-1px);
+    }
+
+    select option {
+      background: #17100b;
+      color: var(--text);
+    }
+
+    .form-note {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      color: #e9ffd8;
+      background: rgba(77, 124, 69, 0.18);
+      border: 1px solid rgba(77, 124, 69, 0.4);
+      line-height: 1.55;
+    }
+
+    .form-note.show {
+      display: block;
+      animation: pageIn 360ms ease both;
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .map-card {
+      position: relative;
+      min-height: 470px;
+      overflow: hidden;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(90deg, rgba(255, 244, 224, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255, 244, 224, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(255, 207, 112, 0.28), transparent 15%),
+        linear-gradient(135deg, #15100d, #2a170d);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+      box-shadow: var(--shadow);
+    }
+
+    .map-card::before,
+    .map-card::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 207, 112, 0.28);
+      border-radius: 999px;
+    }
+
+    .map-card::before {
+      width: 78%;
+      height: 16px;
+      left: 11%;
+      top: 48%;
+      transform: rotate(-18deg);
+    }
+
+    .map-card::after {
+      width: 15px;
+      height: 82%;
+      left: 55%;
+      top: 9%;
+      transform: rotate(22deg);
+    }
+
+    .pin {
+      position: absolute;
+      left: 53%;
+      top: 43%;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 50% 50% 50% 0;
+      color: #211307;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      transform: rotate(-45deg);
+      box-shadow: 0 0 0 12px rgba(255, 207, 112, 0.14), 0 20px 45px rgba(0, 0, 0, 0.35);
+      z-index: 2;
+    }
+
+    .pin span {
+      transform: rotate(45deg);
+      font-size: 23px;
+    }
+
+    .contact-list {
+      margin-top: 22px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .contact-list a,
+    .contact-list div {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255, 244, 224, 0.1);
+      border-radius: 18px;
+      color: var(--muted);
+      background: rgba(255, 244, 224, 0.045);
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .review-card {
+      padding: 24px;
+      border-radius: 26px;
+    }
+
+    .stars {
+      color: var(--gold-2);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .review-card p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .review-card strong {
+      display: block;
+    }
+
+    .footer {
+      padding: 26px 0 42px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .cart-panel,
+    .overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--speed);
+    }
+
+    .overlay {
+      z-index: 70;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(5px);
+    }
+
+    .overlay.show {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .cart-panel {
+      z-index: 80;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .cart-panel.show {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .cart-drawer {
+      width: min(430px, 100%);
+      height: 100%;
+      padding: 22px;
+      border-left: 1px solid var(--border);
+      background: rgba(15, 11, 7, 0.95);
+      box-shadow: -24px 0 80px rgba(0, 0, 0, 0.42);
+      transform: translateX(105%);
+      transition: transform var(--speed);
+      backdrop-filter: blur(22px);
+      overflow-y: auto;
+    }
+
+    .cart-panel.show .cart-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .drawer-head h3 {
+      font-size: 26px;
+    }
+
+    .close-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      color: var(--text);
+      background: rgba(255, 244, 224, 0.08);
+      font-size: 22px;
+    }
+
+    .cart-items {
+      display: grid;
+      gap: 12px;
+      min-height: 180px;
+    }
+
+    .empty-cart {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      padding: 20px;
+      border: 1px dashed rgba(255, 244, 224, 0.18);
+      border-radius: 22px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(255, 244, 224, 0.1);
+      border-radius: 18px;
+      background: rgba(255, 244, 224, 0.06);
+    }
+
+    .cart-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .cart-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: #211307;
+      background: var(--gold-2);
+      font-weight: 900;
+    }
+
+    .remove-btn {
+      color: #ffd7d2;
+      background: rgba(157, 47, 36, 0.22);
+      border: 1px solid rgba(157, 47, 36, 0.36);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .cart-summary {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 244, 224, 0.12);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 10px 0;
+      color: var(--muted);
+    }
+
+    .summary-row.total {
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 100;
+      max-width: calc(100% - 32px);
+      padding: 14px 18px;
+      border: 1px solid rgba(255, 207, 112, 0.34);
+      border-radius: 999px;
+      color: #231304;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 20px 42px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transform: translate(-50%, 20px);
+      pointer-events: none;
+      transition: opacity var(--speed), transform var(--speed);
+      font-weight: 900;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 620ms ease, transform 620ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .navbar {
+        align-items: flex-start;
+        border-radius: 28px;
+        flex-wrap: wrap;
+      }
+
+      .menu-toggle {
+        display: grid;
+      }
+
+      .nav-links {
+        order: 3;
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 4px 4px;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-link {
+        width: 100%;
+        text-align: left;
+      }
+
+      .hero,
+      .about-layout,
+      .reservation-layout,
+      .contact-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 0;
+      }
+
+      .hero-card-wrap {
+        min-height: 560px;
+      }
+
+      .feature-grid,
+      .menu-grid,
+      .review-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .section-head {
+        display: grid;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app-shell {
+        width: min(100% - 22px, 1220px);
+      }
+
+      .navbar {
+        top: 10px;
+        margin-top: 10px;
+        padding: 10px;
+      }
+
+      .brand-name span {
+        display: none;
+      }
+
+      .hero h1,
+      .section-head h1,
+      .section-head h2 {
+        letter-spacing: -1.5px;
+      }
+
+      .hero-card-wrap {
+        min-height: 390px;
+      }
+
+      .floating-card {
+        display: none;
+      }
+
+      .stats-grid,
+      .feature-grid,
+      .menu-grid,
+      .review-grid,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+
+      .story-card {
+        min-height: auto;
+      }
+
+      .chef-circle {
+        margin-top: 22px;
+      }
+
+      .menu-toolbar {
+        align-items: stretch;
+      }
+
+      .search-box,
+      .filters {
+        width: 100%;
+      }
+
+      .filter-btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="navbar" aria-label="Ana menü">
+      <a href="#home" class="brand" aria-label="Lunora ana sayfa">
+        <div class="brand-mark">🍽️</div>
+        <div class="brand-name">
+          <strong>Lunora</strong>
+          <span>Fine Kitchen</span>
+        </div>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <button class="nav-link active" data-page="home">Ana Sayfa</button>
+        <button class="nav-link" data-page="menu">Menü</button>
+        <button class="nav-link" data-page="about">Hakkımızda</button>
+        <button class="nav-link" data-page="reservation">Rezervasyon</button>
+        <button class="nav-link" data-page="contact">İletişim</button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="icon-btn cart-btn" id="cartOpen" aria-label="Sepeti aç">
+          🛒
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Mobil menüyü aç">☰</button>
+      </div>
+    </nav>
+
+    <main>
+      <section class="page active" id="page-home">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">İzmir'in sıcak akşamları için</div>
+            <h1>Modern dokunuşlu <span class="gradient-text">gurme lezzetler.</span></h1>
+            <p>Lunora, taş fırın kokusu, özenle seçilmiş malzemeler ve şık atmosferi tek masada buluşturan premium bir restaurant deneyimi sunar.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" data-page="reservation">Rezervasyon Yap →</button>
+              <button class="btn btn-ghost" data-page="menu">Menüyü İncele</button>
+            </div>
+
+            <div class="stats-grid reveal">
+              <div class="stat-card">
+                <strong>4.9</strong>
+                <span>Misafir puanı</span>
+              </div>
+              <div class="stat-card">
+                <strong>38+</strong>
+                <span>İmza lezzet</span>
+              </div>
+              <div class="stat-card">
+                <strong>12</strong>
+                <span>Yıllık deneyim</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-card-wrap" aria-hidden="true">
+            <div class="steam"></div>
+            <div class="steam"></div>
+            <div class="steam"></div>
+            <div class="hero-plate">
+              <span class="food-dot dot-1"></span>
+              <span class="food-dot dot-2"></span>
+              <span class="food-dot dot-3"></span>
+              <span class="food-dot dot-4"></span>
+              <span class="food-dot dot-5"></span>
+            </div>
+            <div class="floating-card float-a">
+              <strong>Şef Tavsiyesi</strong>
+              <span>Trüf aromalı risotto, közlenmiş mantar ve parmesan kreması.</span>
+            </div>
+            <div class="floating-card float-b">
+              <strong>Bugünün Masası</strong>
+              <span>Canlı müzik, loş ışık ve deniz esintili akşam menüsü.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-head center reveal">
+          <div>
+            <div class="eyebrow">Neden Lunora?</div>
+            <h2>Her detay masaya gelmeden önce düşünülür.</h2>
+            <p>Lezzeti sadece yemek olarak değil, atmosfer, servis ve sunum ile tamamlanan bir deneyim olarak tasarlıyoruz.</p>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <article class="glass-card reveal">
+            <div class="card-icon">🔥</div>
+            <h3>Taş Fırın</h3>
+            <p>Pizza, ekmek ve özel tabaklar yüksek ısı taş fırında doğal aroma ile pişer.</p>
+          </article>
+          <article class="glass-card reveal">
+            <div class="card-icon">🌿</div>
+            <h3>Taze Ürün</h3>
+            <p>Mevsim sebzeleri ve günlük tedarik edilen ürünlerle daha canlı tabaklar hazırlanır.</p>
+          </article>
+          <article class="glass-card reveal">
+            <div class="card-icon">✨</div>
+            <h3>Şık Atmosfer</h3>
+            <p>Loş ışık, sıcak ahşap tonları ve modern detaylarla özel akşamlar için ideal ortam.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-menu">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Menü</div>
+            <h1>İmza tabaklarımız</h1>
+            <p>Filtrele, ara, favori tabağını sepete ekle. Bu demo sepette fiyat hesaplama bile tek dosya içinde çalışır.</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn btn-primary" data-page="reservation">Masa Ayır</button>
+          </div>
+        </div>
+
+        <div class="menu-toolbar">
+          <div class="filters" id="filters">
+            <button class="filter-btn active" data-filter="all">Tümü</button>
+            <button class="filter-btn" data-filter="starter">Başlangıç</button>
+            <button class="filter-btn" data-filter="main">Ana Yemek</button>
+            <button class="filter-btn" data-filter="dessert">Tatlı</button>
+            <button class="filter-btn" data-filter="drink">İçecek</button>
+          </div>
+          <input class="search-box" id="menuSearch" type="search" placeholder="Menüde ara: pizza, risotto, limonata..." />
+        </div>
+
+        <div class="menu-grid" id="menuGrid"></div>
+      </section>
+
+      <section class="page" id="page-about">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Hikayemiz</div>
+            <h1>Geleneksel sıcaklık, modern sunum.</h1>
+            <p>Lunora, iyi yemeği hızlı tüketilen bir şey değil; hafızada kalan bir akşam deneyimi olarak görür.</p>
+          </div>
+        </div>
+
+        <div class="about-layout">
+          <article class="story-card reveal">
+            <div class="chef-circle">👨‍🍳</div>
+            <h3>Şef Arda'nın mutfağı</h3>
+            <p>Akdeniz esintili reçeteler, Anadolu ürünleri ve modern pişirme teknikleriyle birleşir. Her tabak, sade ama güçlü bir lezzet dengesi yakalamak için hazırlanır.</p>
+          </article>
+
+          <div class="timeline">
+            <article class="timeline-item reveal">
+              <div class="year">2014</div>
+              <div>
+                <h3>İlk küçük mutfak</h3>
+                <p>Lunora'nın temeli, 24 kişilik butik bir salon ve tamamen el yapımı menüyle atıldı.</p>
+              </div>
+            </article>
+            <article class="timeline-item reveal">
+              <div class="year">2018</div>
+              <div>
+                <h3>Taş fırın dönemi</h3>
+                <p>Restaurantın kalbine özel taş fırın eklendi; ekmek, pizza ve köz tabakları imza lezzet haline geldi.</p>
+              </div>
+            </article>
+            <article class="timeline-item reveal">
+              <div class="year">2022</div>
+              <div>
+                <h3>Yeni konsept</h3>
+                <p>Klasik menü modern servis diliyle güncellendi. Sunumlar daha minimal, lezzetler daha net hale geldi.</p>
+              </div>
+            </article>
+            <article class="timeline-item reveal">
+              <div class="year">Bugün</div>
+              <div>
+                <h3>Özel deneyim</h3>
+                <p>Rezervasyon, etkinlik ve şef menüsü seçenekleriyle her masa için kişiselleştirilmiş bir akşam hazırlanır.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="section-head center reveal" style="margin-top: 56px;">
+          <div>
+            <div class="eyebrow">Yorumlar</div>
+            <h2>Misafirler ne diyor?</h2>
+          </div>
+        </div>
+
+        <div class="review-grid">
+          <article class="review-card reveal">
+            <div class="stars">★★★★★</div>
+            <p>Ambiyans, servis ve yemekler aynı kalitede. Özellikle risotto gerçekten çok başarılıydı.</p>
+            <strong>Deniz K.</strong>
+          </article>
+          <article class="review-card reveal">
+            <div class="stars">★★★★★</div>
+            <p>Doğum günü için rezervasyon yaptık. Masanın hazırlanışı ve tatlı sunumu çok iyiydi.</p>
+            <strong>Ece A.</strong>
+          </article>
+          <article class="review-card reveal">
+            <div class="stars">★★★★★</div>
+            <p>Menü sade ama güçlü. Gereksiz karmaşa yok, her tabak net ve kaliteli hissettiriyor.</p>
+            <strong>Mert S.</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="page-reservation">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Rezervasyon</div>
+            <h1>Masayı ayır, akşamı bize bırak.</h1>
+            <p>Formu doldurduğunda demo onay mesajı çıkar. Gerçek sitede burası backend veya mail servisine bağlanabilir.</p>
+          </div>
+        </div>
+
+        <div class="reservation-layout">
+          <aside class="reservation-card reveal">
+            <h3>Çalışma saatleri</h3>
+            <p>Yoğun akşam saatlerinde rezervasyon önerilir. Şef menüsü için en az 1 gün önceden bilgi verilmelidir.</p>
+            <div class="hours-list">
+              <div class="hours-row"><strong>Pazartesi - Perşembe</strong><span>12:00 - 23:00</span></div>
+              <div class="hours-row"><strong>Cuma</strong><span>12:00 - 00:30</span></div>
+              <div class="hours-row"><strong>Cumartesi</strong><span>10:00 - 00:30</span></div>
+              <div class="hours-row"><strong>Pazar</strong><span>10:00 - 22:30</span></div>
+            </div>
+          </aside>
+
+          <section class="reservation-card reveal">
+            <h3>Rezervasyon formu</h3>
+            <form id="reservationForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="name">Ad Soyad</label>
+                  <input id="name" name="name" type="text" placeholder="Örn. Blate Official" required />
+                </div>
+                <div class="field">
+                  <label for="phone">Telefon</label>
+                  <input id="phone" name="phone" type="tel" placeholder="05xx xxx xx xx" required />
+                </div>
+                <div class="field">
+                  <label for="date">Tarih</label>
+                  <input id="date" name="date" type="date" required />
+                </div>
+                <div class="field">
+                  <label for="time">Saat</label>
+                  <input id="time" name="time" type="time" required />
+                </div>
+                <div class="field">
+                  <label for="people">Kişi Sayısı</label>
+                  <select id="people" name="people" required>
+                    <option value="2">2 kişi</option>
+                    <option value="3">3 kişi</option>
+                    <option value="4">4 kişi</option>
+                    <option value="5">5 kişi</option>
+                    <option value="6">6 kişi</option>
+                    <option value="8">8 kişi</option>
+                    <option value="10+">10+ kişi</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="area">Masa Tercihi</label>
+                  <select id="area" name="area" required>
+                    <option value="Salon">Salon</option>
+                    <option value="Teras">Teras</option>
+                    <option value="Pencere kenarı">Pencere kenarı</option>
+                    <option value="Özel masa">Özel masa</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label for="note">Not</label>
+                  <textarea id="note" name="note" placeholder="Doğum günü, alerji, özel istek..."></textarea>
+                </div>
+              </div>
+              <div class="section-actions">
+                <button class="btn btn-primary" type="submit">Rezervasyonu Gönder →</button>
+                <button class="btn btn-ghost" type="reset">Temizle</button>
+              </div>
+              <div class="form-note" id="reservationNote"></div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-contact">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">İletişim</div>
+            <h1>Bize ulaş</h1>
+            <p>Adres, telefon, mail ve sosyal alanlar tek dosyalık demo olarak hazır. Harita görseli de CSS ile çizildi.</p>
+          </div>
+        </div>
+
+        <div class="contact-layout">
+          <section class="contact-card reveal">
+            <h3>Lunora Restaurant</h3>
+            <p>Özel rezervasyon, etkinlik ve menü soruları için bize ulaşabilirsin.</p>
+            <div class="contact-list">
+              <div>📍 Alsancak, İzmir / Türkiye</div>
+              <a href="tel:+902321234567">📞 +90 232 123 45 67</a>
+              <a href="mailto:hello@lunora.example">✉️ hello@lunora.example</a>
+              <a href="#menu" data-page="menu">🍽️ Online menüyü aç</a>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-primary" data-page="reservation">Rezervasyon Yap</button>
+              <button class="btn btn-ghost" id="copyAddress">Adresi Kopyala</button>
+            </div>
+          </section>
+
+          <section class="map-card reveal" aria-label="CSS ile çizilmiş harita">
+            <div class="pin"><span>🍴</span></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © <span id="year"></span> Lunora Restaurant. Tek dosyalık HTML/CSS/JS demo sitesi.
+    </footer>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="cart-panel" id="cartPanel" aria-label="Sepet paneli">
+    <div class="cart-drawer">
+      <div class="drawer-head">
+        <h3>Sepet</h3>
+        <button class="close-btn" id="cartClose" aria-label="Sepeti kapat">×</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-summary">
+        <div class="summary-row"><span>Ara toplam</span><strong id="subtotal">₺0</strong></div>
+        <div class="summary-row"><span>Servis</span><strong id="service">₺0</strong></div>
+        <div class="summary-row total"><span>Toplam</span><strong id="total">₺0</strong></div>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" id="checkoutBtn">Siparişi Tamamla</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast">Sepete eklendi</div>
+
+  <script>
+    const menuData = [
+      {
+        id: 1,
+        name: "Bruschetta Trio",
+        category: "starter",
+        price: 185,
+        emoji: "🥖",
+        desc: "Domates, fesleğen, sarımsak kreması ve zeytinyağlı çıtır ekmek üçlüsü.",
+        tags: ["Hafif", "Vejetaryen"]
+      },
+      {
+        id: 2,
+        name: "Köz Patlıcan Kreması",
+        category: "starter",
+        price: 165,
+        emoji: "🍆",
+        desc: "Köz aromalı patlıcan, yoğurt köpüğü, acı yağ ve çıtır nohut ile servis edilir.",
+        tags: ["İmza", "Sıcak"]
+      },
+      {
+        id: 3,
+        name: "Trüflü Risotto",
+        category: "main",
+        price: 420,
+        emoji: "🍚",
+        desc: "Arborio pirinci, mantar, parmesan, trüf yağı ve tereyağlı bitiş.",
+        tags: ["Şef Tavsiyesi", "Kremalı"]
+      },
+      {
+        id: 4,
+        name: "Taş Fırın Pizza",
+        category: "main",
+        price: 365,
+        emoji: "🍕",
+        desc: "Uzun fermente hamur, San Marzano sos, mozzarella, fesleğen ve zeytinyağı.",
+        tags: ["Taş Fırın", "Popüler"]
+      },
+      {
+        id: 5,
+        name: "Izgara Bonfile",
+        category: "main",
+        price: 720,
+        emoji: "🥩",
+        desc: "Odun kömürü aroması, patates fondan, demi-glace sos ve mevsim yeşillikleri.",
+        tags: ["Premium", "Protein"]
+      },
+      {
+        id: 6,
+        name: "Akdeniz Levrek",
+        category: "main",
+        price: 560,
+        emoji: "🐟",
+        desc: "Limon beurre blanc, kuşkonmaz, kapari ve zeytinyağlı ot salatası.",
+        tags: ["Deniz", "Ferahlık"]
+      },
+      {
+        id: 7,
+        name: "San Sebastian",
+        category: "dessert",
+        price: 210,
+        emoji: "🍰",
+        desc: "Yanık yüzeyli kremamsı cheesecake, bitter çikolata sosu ile.",
+        tags: ["Tatlı", "Kremalı"]
+      },
+      {
+        id: 8,
+        name: "Limonlu Pavlova",
+        category: "dessert",
+        price: 195,
+        emoji: "🍋",
+        desc: "Çıtır beze, limon kreması, orman meyveleri ve nane dokunuşu.",
+        tags: ["Fresh", "Hafif"]
+      },
+      {
+        id: 9,
+        name: "Ev Yapımı Limonata",
+        category: "drink",
+        price: 95,
+        emoji: "🍹",
+        desc: "Taze limon, nane, az şeker ve buzla hazırlanan ferah içecek.",
+        tags: ["Soğuk", "Ev Yapımı"]
+      },
+      {
+        id: 10,
+        name: "Signature Mocktail",
+        category: "drink",
+        price: 145,
+        emoji: "🍸",
+        desc: "Narenciye, kırmızı meyve, soda ve özel baharat şurubu karışımı.",
+        tags: ["İmza", "Alkolsüz"]
+      },
+      {
+        id: 11,
+        name: "Mercimek Arancini",
+        category: "starter",
+        price: 175,
+        emoji: "🧆",
+        desc: "Baharatlı mercimek topları, sarımsaklı yoğurt ve acı domates sosuyla.",
+        tags: ["Çıtır", "Sıcak"]
+      },
+      {
+        id: 12,
+        name: "Çikolatalı Sufle",
+        category: "dessert",
+        price: 225,
+        emoji: "🍫",
+        desc: "Akışkan bitter çikolata, vanilyalı dondurma ve fındık kırığı ile.",
+        tags: ["Sıcak", "Yoğun"]
+      }
+    ];
+
+    const pages = document.querySelectorAll(".page");
+    const navLinks = document.querySelectorAll(".nav-link");
+    const dataPageButtons = document.querySelectorAll("[data-page]");
+    const navLinksWrapper = document.getElementById("navLinks");
+    const menuToggle = document.getElementById("menuToggle");
+    const menuGrid = document.getElementById("menuGrid");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const menuSearch = document.getElementById("menuSearch");
+    const cartOpen = document.getElementById("cartOpen");
+    const cartClose = document.getElementById("cartClose");
+    const cartPanel = document.getElementById("cartPanel");
+    const overlay = document.getElementById("overlay");
+    const cartItems = document.getElementById("cartItems");
+    const cartCount = document.getElementById("cartCount");
+    const subtotalEl = document.getElementById("subtotal");
+    const serviceEl = document.getElementById("service");
+    const totalEl = document.getElementById("total");
+    const toast = document.getElementById("toast");
+    const reservationForm = document.getElementById("reservationForm");
+    const reservationNote = document.getElementById("reservationNote");
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    const copyAddress = document.getElementById("copyAddress");
+
+    let activeFilter = "all";
+    let cart = [];
+    let toastTimer;
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function setPage(pageName) {
+      pages.forEach(page => page.classList.toggle("active", page.id === `page-${pageName}`));
+      navLinks.forEach(link => link.classList.toggle("active", link.dataset.page === pageName));
+      navLinksWrapper.classList.remove("open");
+      window.location.hash = pageName;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      requestAnimationFrame(observeReveals);
+    }
+
+    dataPageButtons.forEach(button => {
+      button.addEventListener("click", event => {
+        const target = event.currentTarget.dataset.page;
+        if (target) setPage(target);
+      });
+    });
+
+    menuToggle.addEventListener("click", () => {
+      navLinksWrapper.classList.toggle("open");
+    });
+
+    function money(value) {
+      return new Intl.NumberFormat("tr-TR", {
+        style: "currency",
+        currency: "TRY",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function renderMenu() {
+      const search = menuSearch.value.trim().toLowerCase();
+      const filtered = menuData.filter(item => {
+        const matchesFilter = activeFilter === "all" || item.category === activeFilter;
+        const matchesSearch = [item.name, item.desc, item.tags.join(" ")].join(" ").toLowerCase().includes(search);
+        return matchesFilter && matchesSearch;
+      });
+
+      if (!filtered.length) {
+        menuGrid.innerHTML = `
+          <div class="empty-cart" style="grid-column: 1 / -1; min-height: 340px;">
+            Aramana uygun ürün bulunamadı. Farklı bir kelime veya filtre dene.
+          </div>
+        `;
+        return;
+      }
+
+      menuGrid.innerHTML = filtered.map(item => `
+        <article class="menu-item reveal" data-category="${item.category}">
+          <div class="food-art" data-emoji="${item.emoji}"></div>
+          <div class="menu-content">
+            <div class="menu-topline">
+              <h3>${item.name}</h3>
+              <div class="price">${money(item.price)}</div>
+            </div>
+            <p class="menu-desc">${item.desc}</p>
+            <div class="tags">
+              ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+            </div>
+            <button class="add-btn" data-add="${item.id}">Sepete Ekle</button>
+          </div>
+        </article>
+      `).join("");
+
+      document.querySelectorAll("[data-add]").forEach(button => {
+        button.addEventListener("click", () => addToCart(Number(button.dataset.add)));
+      });
+
+      observeReveals();
+    }
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        activeFilter = button.dataset.filter;
+        renderMenu();
+      });
+    });
+
+    menuSearch.addEventListener("input", renderMenu);
+
+    function addToCart(id) {
+      const item = menuData.find(food => food.id === id);
+      const existing = cart.find(food => food.id === id);
+
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...item, qty: 1 });
+      }
+
+      renderCart();
+      showToast(`${item.name} sepete eklendi`);
+    }
+
+    function renderCart() {
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const service = subtotal > 0 ? Math.round(subtotal * 0.08) : 0;
+      const total = subtotal + service;
+
+      cartCount.textContent = count;
+      subtotalEl.textContent = money(subtotal);
+      serviceEl.textContent = money(service);
+      totalEl.textContent = money(total);
+
+      if (!cart.length) {
+        cartItems.innerHTML = `<div class="empty-cart">Sepetin boş. Menüden birkaç lezzet ekle.</div>`;
+        return;
+      }
+
+      cartItems.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div>
+            <strong>${item.emoji} ${item.name}</strong>
+            <span>${money(item.price)} × ${item.qty}</span>
+            <div class="cart-controls">
+              <button class="qty-btn" data-dec="${item.id}">−</button>
+              <strong>${item.qty}</strong>
+              <button class="qty-btn" data-inc="${item.id}">+</button>
+              <button class="remove-btn" data-remove="${item.id}">Sil</button>
+            </div>
+          </div>
+          <strong>${money(item.price * item.qty)}</strong>
+        </div>
+      `).join("");
+
+      document.querySelectorAll("[data-inc]").forEach(btn => {
+        btn.addEventListener("click", () => changeQty(Number(btn.dataset.inc), 1));
+      });
+
+      document.querySelectorAll("[data-dec]").forEach(btn => {
+        btn.addEventListener("click", () => changeQty(Number(btn.dataset.dec), -1));
+      });
+
+      document.querySelectorAll("[data-remove]").forEach(btn => {
+        btn.addEventListener("click", () => removeFromCart(Number(btn.dataset.remove)));
+      });
+    }
+
+    function changeQty(id, delta) {
+      const item = cart.find(food => food.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) removeFromCart(id);
+      renderCart();
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(item => item.id !== id);
+      renderCart();
+    }
+
+    function openCart() {
+      overlay.classList.add("show");
+      cartPanel.classList.add("show");
+    }
+
+    function closeCart() {
+      overlay.classList.remove("show");
+      cartPanel.classList.remove("show");
+    }
+
+    cartOpen.addEventListener("click", openCart);
+    cartClose.addEventListener("click", closeCart);
+    overlay.addEventListener("click", closeCart);
+
+    checkoutBtn.addEventListener("click", () => {
+      if (!cart.length) {
+        showToast("Önce sepete ürün ekle");
+        return;
+      }
+      cart = [];
+      renderCart();
+      closeCart();
+      showToast("Demo sipariş alındı. Gerçek ödeme bağlı değil.");
+    });
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    reservationForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const data = new FormData(reservationForm);
+      const name = data.get("name");
+      const date = data.get("date");
+      const time = data.get("time");
+      const people = data.get("people");
+      const area = data.get("area");
+
+      reservationNote.innerHTML = `<strong>${name}</strong>, ${date} tarihinde saat ${time} için ${people} kişilik ${area.toLowerCase()} rezervasyon isteğin demo olarak kaydedildi.`;
+      reservationNote.classList.add("show");
+      showToast("Rezervasyon isteği oluşturuldu");
+    });
+
+    copyAddress.addEventListener("click", async () => {
+      const address = "Lunora Restaurant, Alsancak, İzmir / Türkiye";
+      try {
+        await navigator.clipboard.writeText(address);
+        showToast("Adres kopyalandı");
+      } catch {
+        showToast(address);
+      }
+    });
+
+    function observeReveals() {
+      const reveals = document.querySelectorAll(".reveal");
+      reveals.forEach(element => {
+        const rect = element.getBoundingClientRect();
+        const visible = rect.top < window.innerHeight - 80;
+        if (visible) element.classList.add("visible");
+      });
+    }
+
+    window.addEventListener("scroll", observeReveals, { passive: true });
+    window.addEventListener("resize", observeReveals);
+
+    window.addEventListener("hashchange", () => {
+      const hashPage = window.location.hash.replace("#", "");
+      if (["home", "menu", "about", "reservation", "contact"].includes(hashPage)) {
+        setPage(hashPage);
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeCart();
+    });
+
+    function init() {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("date").min = today;
+      document.getElementById("date").value = today;
+      document.getElementById("time").value = "20:00";
+
+      const startPage = window.location.hash.replace("#", "") || "home";
+      if (["home", "menu", "about", "reservation", "contact"].includes(startPage)) {
+        setPage(startPage);
+      }
+
+      renderMenu();
+      renderCart();
+      observeReveals();
+    }
+
+    init();
+  </script>
+</body>
+</html>
